@@ -25,8 +25,8 @@ os.environ['LANGCHAIN_PROJECT'] = st.secrets["LANGSMITH"]["LANGCHAIN_PROJECT"]
 
 client = Client()
 #embeddings = OpenAIEmbeddings()
-embeddings = AzureOpenAIEmbeddings(azure_endpoint="https://mandarnithinpraveen.openai.azure.com/",
-                              openai_api_key="01a86ebdb2fc4d2ea1660672e161a116", 
+embeddings = AzureOpenAIEmbeddings(azure_endpoint=st.secrets["OPENAI"]["AZURE_OPENAI_ENDPOINT"],
+                              openai_api_key=st.secrets["OPENAI"]["AZURE_OPENAI_API_KEY"], 
                               model='nithin-text-embedding-ada-002'
                               )
 
@@ -111,6 +111,12 @@ if prompt := st.chat_input(placeholder="Ask me a question!"):
                 })
                 st.session_state.run_id = cb.traced_runs[0].id
             message_placeholder.markdown(full_response.get("answer"))
+
+            for j,doc in enumerate(full_response.get("context_str")):
+                st.write(f"Context {j+1}:")
+                st.markdown("")
+                st.write(doc.page_content)
+                st.markdown('--------')
 
 if st.session_state.get("run_id"):
     run_id = st.session_state.run_id
